@@ -15,5 +15,7 @@ CREATE INDEX IF NOT EXISTS idx_users_email
 ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_google_id
 ON users(google_id);
+
+
 INSERT INTO _migrations (filename)
 VALUES ('0002_users.sql');

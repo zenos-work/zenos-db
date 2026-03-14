@@ -2,12 +2,12 @@
 # Usage: ./scripts/migrate.sh [local|prd|staging]
 
 ENV=${1:-local}
-MIGRATIONS_DIR="./migrations"
+VALIDATIONS_DIR="./validators"
 BACKEND_DIR="../zenos-backend"
 
-echo "Running migrations for environment: $ENV"
+echo "Running validations for environment: $ENV"
 
-for file in $MIGRATIONS_DIR/*.sql; do
+for file in $VALIDATIONS_DIR/*.sql; do
   filename=$(basename "$file")
   echo "Applying: $filename"
 
