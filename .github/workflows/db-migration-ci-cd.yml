@@ -1,0 +1,40 @@
+name: DB Migration CI/CD
+
+on:
+  push:
+    branches:
+      - development
+    paths:
+      - migrations/**
+      - validators/**
+      - scripts/**
+      - wrangler.jsonc
+      - .github/workflows/db-migration-ci-cd.yml
+  pull_request:
+    branches:
+      - staging
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+    paths:
+      - migrations/**
+      - validators/**
+      - scripts/**
+      - wrangler.jsonc
+      - .github/workflows/db-migration-ci-cd.yml
+
+concurrency:
+  group: db-migrations-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  call-reusable-workflow:
+    name: DB Migrate
+    uses: zenos-work/zenos-infra/.github/workflows/db-migrate.yml@development
+    with:
+      environment: ${{ (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'staging' && github.event.pull_request.head.ref == 'development') && 'staging' || (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'master' && github.event.pull_request.head.ref == 'staging') && 'production' || 'staging' }}
+      run_migrate: ${{ (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged && (github.event.pull_request.base.ref == 'staging' || github.event.pull_request.base.ref == 'master')) }}
+    secrets: inherit

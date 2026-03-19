@@ -3,7 +3,7 @@
 
 ENV=${1:-local}
 MIGRATIONS_DIR="./migrations"
-BACKEND_DIR="../zenos-backend"
+CONFIG_FILE=${CONFIG_FILE:-"./wrangler.jsonc"}
 
 echo "Running migrations for environment: $ENV"
 
@@ -13,18 +13,18 @@ for file in $MIGRATIONS_DIR/*.sql; do
 
   if [ "$ENV" = "local" ]; then
     wrangler d1 execute prd-zenos-blog-db --local \
-      --config "$BACKEND_DIR/wrangler.jsonc" \
+      --config "$CONFIG_FILE" \
       --file="$file"
   elif [ "$ENV" = "prd" ]; then
     wrangler d1 execute prd-zenos-blog-db --remote \
-      --config "$BACKEND_DIR/wrangler.jsonc" \
+      --config "$CONFIG_FILE" \
       --file="$file"
   elif [ "$ENV" = "staging" ]; then
     wrangler d1 execute staging-zenos-blog-db --remote \
-      --config "$BACKEND_DIR/wrangler.jsonc" \
+      --config "$CONFIG_FILE" \
       --env staging \
       --file="$file"
   fi
 done
 
-echo "✅ All migrations applied for: $ENV"
+echo "All migrations applied for: $ENV"

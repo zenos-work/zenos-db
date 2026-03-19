@@ -1,0 +1,22 @@
+{
+  "name": "zenos-db",
+  "compatibility_date": "2024-12-01",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "prd-zenos-blog-db",
+      "database_id": "fa9659e2-584d-478f-97b9-2bcfdae5f309"
+    }
+  ],
+  "env": {
+    "staging": {
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "staging-zenos-blog-db",
+          "database_id": "4aa50a0e-58a7-4898-874d-63859e6b5f11"
+        }
+      ]
+    }
+  }
+}
