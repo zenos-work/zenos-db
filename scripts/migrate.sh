@@ -2,12 +2,32 @@
 # Usage: ./scripts/migrate.sh [local|prd|staging]
 
 ENV=${1:-local}
-MIGRATIONS_DIR="./migrations"
-CONFIG_FILE=${CONFIG_FILE:-"./wrangler.jsonc"}
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+MIGRATIONS_DIR="$REPO_ROOT/migrations"
+
+if [ -z "${CONFIG_FILE:-}" ]; then
+  if [ -f "$PWD/wrangler.jsonc" ]; then
+    CONFIG_FILE="$PWD/wrangler.jsonc"
+  else
+    CONFIG_FILE="$REPO_ROOT/wrangler.jsonc"
+  fi
+fi
+
+if [ "$ENV" != "local" ] && [ "$ENV" != "prd" ] && [ "$ENV" != "staging" ]; then
+  echo "Invalid environment: $ENV"
+  echo "Usage: ./scripts/migrate.sh [local|prd|staging]"
+  exit 1
+fi
 
 echo "Running migrations for environment: $ENV"
 
-for file in $MIGRATIONS_DIR/*.sql; do
+for file in "$MIGRATIONS_DIR"/*.sql; do
+  if [ ! -e "$file" ]; then
+    echo "No migration files found in $MIGRATIONS_DIR"
+    exit 1
+  fi
+
   filename=$(basename "$file")
   echo "Applying: $filename"
 
