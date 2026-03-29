@@ -35,6 +35,7 @@ erDiagram
         TEXT rejection_note
         INTEGER views_count
         INTEGER likes_count
+        INTEGER shares_count
         INTEGER comments_count
         INTEGER is_featured
         TEXT published_at
@@ -105,6 +106,14 @@ erDiagram
         TEXT created_at
     }
 
+    article_shares {
+        TEXT id PK
+        TEXT article_id FK
+        TEXT user_id FK
+        TEXT provider
+        TEXT created_at
+    }
+
     follows {
         TEXT follower_id FK
         TEXT following_id FK
@@ -169,6 +178,7 @@ erDiagram
     users ||--o{ comments : "writes"
     users ||--o{ bookmarks : "saves"
     users ||--o{ likes : "likes"
+    users ||--o{ article_shares : "shares"
     users ||--o{ notifications : "receives"
     users ||--o{ notifications : "triggers"
     users ||--o{ follows : "follows"
@@ -181,6 +191,7 @@ erDiagram
     articles ||--o{ comments : "has"
     articles ||--o{ bookmarks : "bookmarked in"
     articles ||--o{ likes : "liked in"
+    articles ||--o{ article_shares : "shared in"
     articles ||--o{ notifications : "referenced in"
     articles ||--o{ article_events : "captures interactions for"
     articles ||--o{ article_success_hourly : "aggregated success snapshots"
@@ -207,6 +218,7 @@ Default content bootstrap:
 | `comments` | Threaded comments | `parent_id` self-references for replies; moderation flags support abuse handling |
 | `bookmarks` | User saved articles | Composite PK `(user_id, article_id)` |
 | `likes` | Article likes | Composite PK `(user_id, article_id)` |
+| `article_shares` | Outbound share events (LinkedIn-first) | Provider CHECK currently `linkedin` |
 | `follows` | User follows | CHECK `follower_id != following_id` |
 | `notifications` | Activity feed | `actor_id` nullable for system notifications |
 | `article_events` | SR-011 lightweight event stream | `event_type` CHECK: VIEW\|LIKE\|COMMENT\|OUTCOME |
