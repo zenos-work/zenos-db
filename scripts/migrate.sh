@@ -1,12 +1,15 @@
 #!/bin/bash
-# Usage: ./scripts/migrate.sh [local|prd|staging]
+# Usage: ./scripts/migrate.sh [local|prd|staging] [config_file_path]
 
 ENV=${1:-local}
+CONFIG_FILE_ARG=${2:-}
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 MIGRATIONS_DIR="$REPO_ROOT/migrations"
 
-if [ -z "${CONFIG_FILE:-}" ]; then
+if [ -n "$CONFIG_FILE_ARG" ]; then
+  CONFIG_FILE="$CONFIG_FILE_ARG"
+elif [ -z "${CONFIG_FILE:-}" ]; then
   if [ -f "$PWD/wrangler.jsonc" ]; then
     CONFIG_FILE="$PWD/wrangler.jsonc"
   else
@@ -16,7 +19,7 @@ fi
 
 if [ "$ENV" != "local" ] && [ "$ENV" != "prd" ] && [ "$ENV" != "staging" ]; then
   echo "Invalid environment: $ENV"
-  echo "Usage: ./scripts/migrate.sh [local|prd|staging]"
+  echo "Usage: ./scripts/migrate.sh [local|prd|staging] [config_file_path]"
   exit 1
 fi
 
