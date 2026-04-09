@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS workflows (
   description          TEXT,
   status               TEXT NOT NULL DEFAULT 'draft'
                        CHECK(status IN ('draft','active','paused','archived','error')),
+  environment          TEXT NOT NULL DEFAULT 'dev'
+                       CHECK(environment IN ('dev','staging','production')),
   trigger_type         TEXT NOT NULL,
   definition_version   INTEGER NOT NULL DEFAULT 1,
   total_runs           INTEGER NOT NULL DEFAULT 0,
@@ -67,6 +69,7 @@ CREATE INDEX IF NOT EXISTS idx_workflows_template        ON workflows(is_templat
 CREATE INDEX IF NOT EXISTS idx_workflows_approval_status ON workflows(approval_status);
 CREATE INDEX IF NOT EXISTS idx_workflows_scope_type      ON workflows(scope_type, owner_id);
 CREATE INDEX IF NOT EXISTS idx_workflows_folder_id       ON workflows(folder_id);
+CREATE INDEX IF NOT EXISTS idx_workflows_environment     ON workflows(environment);
 
 -- ─── WORKFLOW VERSIONS ────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS workflow_versions (

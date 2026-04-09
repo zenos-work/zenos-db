@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS organizations (
   id                      TEXT PRIMARY KEY,
   name                    TEXT NOT NULL,
   slug                    TEXT NOT NULL UNIQUE,
+  subdomain               TEXT UNIQUE,
   logo_url                TEXT,
   website                 TEXT,
   description             TEXT,
@@ -27,6 +28,7 @@ CREATE TABLE IF NOT EXISTS organizations (
 );
 
 CREATE INDEX IF NOT EXISTS idx_orgs_slug       ON organizations(slug);
+CREATE INDEX IF NOT EXISTS idx_orgs_subdomain  ON organizations(subdomain);
 CREATE INDEX IF NOT EXISTS idx_orgs_plan_tier  ON organizations(plan_tier);
 CREATE INDEX IF NOT EXISTS idx_orgs_created_by ON organizations(created_by);
 

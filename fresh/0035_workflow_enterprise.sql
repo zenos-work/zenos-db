@@ -190,4 +190,26 @@ CREATE INDEX IF NOT EXISTS idx_wf_audit_run_id       ON workflow_audit_log(run_i
 CREATE INDEX IF NOT EXISTS idx_wf_audit_actor_id     ON workflow_audit_log(actor_id);
 CREATE INDEX IF NOT EXISTS idx_wf_audit_action       ON workflow_audit_log(action);
 
+-- ═══ WORKFLOW ENVIRONMENT PROMOTIONS ═════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS workflow_promotions (
+  id                TEXT PRIMARY KEY,
+  workflow_id       TEXT NOT NULL REFERENCES workflows(id) ON DELETE CASCADE,
+  org_id            TEXT REFERENCES organizations(id) ON DELETE CASCADE,
+  from_environment  TEXT NOT NULL CHECK(from_environment IN ('dev','staging','production')),
+  to_environment    TEXT NOT NULL CHECK(to_environment IN ('dev','staging','production')),
+  version_number    INTEGER NOT NULL,
+  promoted_by       TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  approval_id       TEXT REFERENCES workflow_approvals(id) ON DELETE SET NULL,
+  status            TEXT NOT NULL DEFAULT 'pending'
+                    CHECK(status IN ('pending','approved','promoted','rejected','rolled_back')),
+  rollback_version  INTEGER,
+  promotion_note    TEXT,
+  promoted_at       TEXT,
+  created_at        TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_wf_promotions_workflow_id ON workflow_promotions(workflow_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_wf_promotions_org_id      ON workflow_promotions(org_id);
+CREATE INDEX IF NOT EXISTS idx_wf_promotions_status      ON workflow_promotions(status);
+
 INSERT INTO _migrations (filename) VALUES ('0035_workflow_enterprise.sql');
