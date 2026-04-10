@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS notifications (
   actor_id        TEXT REFERENCES users(id) ON DELETE SET NULL,
   type            TEXT NOT NULL
                   CHECK(type IN ('LIKE','COMMENT','FOLLOW','APPROVED','REJECTED',
-                                 'PUBLISHED','MODERATION_PENDING','MODERATION_REJECTED')),
+                                 'PUBLISHED','MODERATION_PENDING','MODERATION_REJECTED',
+                                 'FEATURE_ANNOUNCEMENT')),
   article_id      TEXT REFERENCES articles(id)  ON DELETE CASCADE,
   comment_id      TEXT REFERENCES comments(id)  ON DELETE CASCADE,
   message         TEXT NOT NULL,
